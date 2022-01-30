@@ -1,0 +1,10 @@
+-r requirements.txt
+
+# dev tooling
+black==21.12b0
+flake8===4.0.1
+isort==5.10.1
+flake8-isort==4.1.1
+pre-commit==2.17.0
+httpie==3.0.2
+

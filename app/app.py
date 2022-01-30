@@ -8,13 +8,13 @@ app = Chalice(app_name="app")
 
 @app.route("/")
 def index():
-    """ Index page for the hello world api """
+    """Index page for the hello world api"""
     return {"hello": "world"}
 
 
 @app.route("/hello/{name}")
 def hello_name(name):
-    """ Sample route for returning names """
+    """Sample route for returning names"""
     return {"hello": name}
 
 

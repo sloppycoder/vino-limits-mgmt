@@ -1,6 +1,22 @@
+exclude: "^$|deploy|scripts|tmp"
+default_stages: [push]
+fail_fast: false
 repos:
+  - repo: https://github.com/PyCQA/flake8
+    rev: 4.0.1
+    hooks:
+      - id: flake8
+
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+        args: ["--profile", "black", "--filter-files"]
+
   - repo: https://github.com/psf/black
-    rev: 19.10b0 # Replace by any tag/version: https://github.com/psf/black/tags
+    rev: 21.12b0
     hooks:
       - id: black
-        language_version: python3.8 # Should be a command that runs python3.6+
+        language_version: python3.9
+        require_serial: true
+        types: [python]

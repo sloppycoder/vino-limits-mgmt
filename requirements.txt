@@ -1,7 +1,4 @@
-pre-commit
-chalice
-pytest
-aws-cdk.aws-s3
-aws-cdk.aws-codepipeline
-aws-cdk.aws-codepipeline-actions
-aws-cdk.aws-codebuild
+chalice==1.26.5
+pytest==6.2.5
+aws-cdk-lib>=2.10.0
+constructs>=10.0.0,<11.0.0

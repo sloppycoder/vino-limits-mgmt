@@ -6,19 +6,19 @@ from app import app
 
 @fixture(name="client_fixture")
 def test_client():
-    """ Test fixture for creating a chalice Client """
+    """Test fixture for creating a chalice Client"""
     with Client(app) as client:
         yield client
 
 
 def test_index_function(client_fixture):
-    """ Ensure the index page returns the correct response """
+    """Ensure the index page returns the correct response"""
     response = client_fixture.http.get("/")
     assert response.json_body == {"hello": "world"}
 
 
 def test_hello_name_function(client_fixture):
-    """ Ensure the name function returns the correct names """
+    """Ensure the name function returns the correct names"""
     name = "myname"
     response = client_fixture.http.get(f"/hello/{name}")
     assert response.json_body == {"hello": f"{name}"}
