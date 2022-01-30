@@ -1,6 +1,18 @@
 import aws_cdk as cdk
 from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep
+from chalice.cdk import Chalice
 from constructs import Construct
+
+
+class ChaliceApp(cdk.Stack):
+    def __init__(self, scope, id, **kwargs):
+        super().__init__(scope, id, **kwargs)
+        self.dynamodb_table = self._create_ddb_table()
+        self.chalice = Chalice(
+            self,
+            "ChaliceApp",
+            source_dir="../app",
+        )
 
 
 class PipelineStack(cdk.Stack):
@@ -31,7 +43,8 @@ class PipelineStack(cdk.Stack):
                     "npm install -g aws-cdk",
                     "python -m pip install -r requirements.txt",
                     "pytest",
-                     "cdk synth",
+                    "cdk synth",
                 ],
             ),
         )
+        ChaliceApp()
