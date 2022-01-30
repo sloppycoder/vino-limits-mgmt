@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 
 import json
-from aws_cdk import core
+
+import aws_cdk as cdk
 from stack import PipelineStack
 
+app = cdk.App()
 
-app = core.App()
-
-with open("../app/.chalice/config.json") as config_file:
+with open("app/.chalice/config.json") as config_file:
     config = json.load(config_file)
-    app_name = config["vino-limits-mgmt"]
+    app_name = config["app_name"]
 
 PipelineStack(
     app,

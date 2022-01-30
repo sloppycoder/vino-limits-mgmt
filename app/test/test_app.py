@@ -1,6 +1,6 @@
-""" Tests for app.py """
 from chalice.test import Client
 from pytest import fixture
+
 from app import app
 
 

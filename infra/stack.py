@@ -1,5 +1,6 @@
 import aws_cdk as cdk
 from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep
+from constructs import Construct
 
 
 class PipelineStack(cdk.Stack):
@@ -7,7 +8,7 @@ class PipelineStack(cdk.Stack):
 
     def __init__(
         self,
-        scope: cdk.Construct,
+        scope: Construct,
         construct_id: str,
         repo: str,
         repo_branch: str,
@@ -15,7 +16,7 @@ class PipelineStack(cdk.Stack):
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        pipeline = CodePipeline(
+        CodePipeline(
             self,
             "Pipeline",
             pipeline_name="LimitsManagementPipeline",
@@ -24,12 +25,13 @@ class PipelineStack(cdk.Stack):
                 input=CodePipelineSource.git_hub(
                     repo,
                     repo_branch,
-                    authentication=cdk.SecretValue.secretsManager("GH_TOKEN_NAME")
+                    authentication=cdk.SecretValue.secrets_manager("github-token"),
                 ),
                 commands=[
                     "npm install -g aws-cdk",
                     "python -m pip install -r requirements.txt",
-                    "pytest" "cdk synth",
+                    # "pytest",
+                     "cdk synth",
                 ],
             ),
         )
