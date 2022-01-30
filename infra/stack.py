@@ -1,50 +1,66 @@
-import aws_cdk as cdk
-from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep
+from aws_cdk import aws_codepipeline as codepipeline
+from aws_cdk import aws_codepipeline_actions as pipeline_actions
+from aws_cdk import core
 from chalice.cdk import Chalice
-from constructs import Construct
 
 
-class ChaliceApp(cdk.Stack):
+class ChaliceApp(core.Stack):
     def __init__(self, scope, id, **kwargs):
         super().__init__(scope, id, **kwargs)
-        self.dynamodb_table = self._create_ddb_table()
         self.chalice = Chalice(
             self,
-            "ChaliceApp",
+            "LimitsManagementApp",
             source_dir="../app",
         )
 
 
-class PipelineStack(cdk.Stack):
+class Pipeline(core.Stack):
     """PipelineStack defines the CI/CD pipeline for this application"""
 
     def __init__(
         self,
-        scope: Construct,
+        scope: core.Construct,
         construct_id: str,
-        repo: str,
+        repo_owner: str,
+        repo_name: str,
         repo_branch: str,
         **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        CodePipeline(
+        sourceArtifact = codepipeline.Artifact()
+        cloudAssemblyArtifact = codepipeline.Artifact()
+        codepipeline.CdkPipeline(
             self,
-            "Pipeline",
-            pipeline_name="LimitsManagementPipeline",
-            synth=ShellStep(
-                "Synth",
-                input=CodePipelineSource.git_hub(
-                    repo,
-                    repo_branch,
-                    authentication=cdk.SecretValue.secrets_manager("github-token"),
-                ),
+            "LimitsManagementPipeline",
+            cloudAssemblyArtifact,
+            sourceAction=pipeline_actions.GitHubSourceAction(
+                actionName="GitHub",
+                output=sourceArtifact,
+                oauthToken=core.SecretValue.secretsManager("github-token"),
+                owner=repo_owner,
+                repo=repo_name,
+                branch=repo_branch,
+            ),
+            synthAction=codepipeline.SimpleSynthAction.standardNpmSynth(
+                sourceArtifact,
+                cloudAssemblyArtifact,
                 commands=[
                     "npm install -g aws-cdk",
                     "python -m pip install -r requirements.txt",
-                    "pytest",
+                    "python -m pytest",
                     "cdk synth",
                 ],
             ),
         )
-        ChaliceApp()
+
+
+class MyAppStack(core.Stack):
+    def __init__(
+        self,
+        scope: core.Construct,
+        construct_id: str,
+        **kwargs,
+    ) -> None:
+        super().__init__(scope, construct_id, **kwargs)
+        Pipeline(scope, construct_id, **kwargs)

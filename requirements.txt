@@ -1,4 +1,3 @@
-chalice==1.26.5
+chalice[cdk]==1.26.5
+aws-cdk.aws-codepipeline-actions==1.142.0
 pytest==6.2.5
-aws-cdk-lib>=2.10.0
-constructs>=10.0.0,<11.0.0
